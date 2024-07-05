@@ -24,24 +24,25 @@ async function main() {
   // lista de personangens
   const lista = ['Rick Sanchez', 'Morty Smith', 'Summer Smith']
 
+  const db = client.db(dbName)
+  const collection = db.collection('item')
 
   // read all
-  app.get('/item', function (req, res) {
-    res.send(lista)
+  app.get('/item', async function (req, res) {
+    const documentos = await collection.find().toArray()
+    res.send(documentos)
   })
 
   // sinalizamos para o express que iremos utilizar json no body
   app.use(express.json())
 
   // create
-  app.post('/item', function (req, res) {
-    console.log(req.body)
-    const item = req.body.nome
-    console.log(item)
+  app.post('/item', async function (req, res) {
+    const item = req.body
 
-    lista.push(item)
+    await collection.insertOne(item)
 
-    res.send(lista)
+    res.send(item)
   })
 
 
